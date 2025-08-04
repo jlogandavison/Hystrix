@@ -20,11 +20,11 @@ import com.netflix.hystrix.strategy.HystrixPlugins;
 /**
  * Interface for a variable similar to {@link ThreadLocal} but scoped at the user request level.
  * <p>
- * Default implementation is {@link HystrixRequestVariableDefault} managed by {@link HystrixRequestContext}.
+ * Default implementation is {@link HystrixRequestVariableDefault} managed by {@link HystrixRequestLifetime}.
  * <p>
  * Custom implementations can be injected using {@link HystrixPlugins} and {@link HystrixConcurrencyStrategy#getRequestVariable}.
  * <p>
- * See JavaDoc of {@link HystrixRequestContext} for more information about functionality this enables and how to use the default implementation.
+ * See JavaDoc of {@link HystrixRequestLifetime} for more information about functionality this enables and how to use the default implementation.
  * 
  * @param <T>
  *            Type to be stored on the HystrixRequestVariable

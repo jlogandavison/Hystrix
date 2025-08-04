@@ -29,12 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.netflix.hystrix.HystrixRequestLog;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 /**
  * Log an INFO message with the output from <code>HystrixRequestLog.getCurrentRequest().getExecutedCommandsAsString()</code> at the end of each requet.
  * <p>
- * A pre-requisite is that {@link HystrixRequestContext} is initialized, such as by using {@link HystrixRequestContextServletFilter}.
+ * A pre-requisite is that {@link HystrixRequestLifetime} is initialized, such as by using {@link HystrixRequestContextServletFilter}.
  * <p>
  * Install by adding the following lines to your project web.xml:
  * <p>
@@ -53,7 +53,7 @@ import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
  * }
  * </pre>
  * <p>
- * NOTE: This filter must complete before {@link HystrixRequestContext} is shutdown otherwise the {@link HystrixRequestLog} will already be cleared.
+ * NOTE: This filter must complete before {@link HystrixRequestLifetime} is shutdown otherwise the {@link HystrixRequestLog} will already be cleared.
  * <p>
  * This will output a log line similar to this:
  * 
@@ -78,7 +78,7 @@ public class HystrixRequestLogViaLoggerServletFilter implements Filter {
             chain.doFilter(request, response);
         } finally {
             try {
-                if (HystrixRequestContext.isCurrentThreadInitialized()) {
+                if (HystrixRequestLifetime.isCurrentThreadInitialized()) {
                     HystrixRequestLog log = HystrixRequestLog.getCurrentRequest();
                     logger.info("Hystrix Executions [{}] => {}", requestURL.toString(), log.getExecutedCommandsAsString());
                 }

@@ -25,7 +25,7 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixContextRunnable;
 import com.netflix.hystrix.strategy.concurrency.HystrixContextScheduler;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import com.netflix.hystrix.strategy.properties.HystrixProperty;
 import org.junit.After;
 import org.junit.Rule;
@@ -1712,7 +1712,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
     public void testBasicExecutionWorksWithoutRequestVariable() {
         try {
             /* force the RequestVariable to not be initialized */
-            HystrixRequestContext.setContextOnCurrentThread(null);
+            HystrixRequestLifetime.setContextOnCurrentThread(null);
 
             TestHystrixObservableCommand<Boolean> command = new SuccessfulTestCommand(ExecutionIsolationStrategy.SEMAPHORE);
             assertEquals(true, command.observe().toBlocking().single());
@@ -1743,7 +1743,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
     public void testCacheKeyExecutionRequiresRequestVariable() {
         try {
             /* force the RequestVariable to not be initialized */
-            HystrixRequestContext.setContextOnCurrentThread(null);
+            HystrixRequestLifetime.setContextOnCurrentThread(null);
 
             TestCircuitBreaker circuitBreaker = new TestCircuitBreaker();
 
@@ -2606,9 +2606,9 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
             public void call(Throwable t1) {
                 System.out.println("onError: " + t1);
                 System.out.println("onError Thread: " + Thread.currentThread());
-                System.out.println("ThreadContext in onError: " + HystrixRequestContext.isCurrentThreadInitialized());
+                System.out.println("ThreadContext in onError: " + HystrixRequestLifetime.isCurrentThreadInitialized());
                 onErrorThread.set(Thread.currentThread());
-                isRequestContextInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                isRequestContextInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
             }
 
         }).subscribe(ts);
@@ -2659,9 +2659,9 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
             public void call(Object t1) {
                 System.out.println("onNext: " + t1);
                 System.out.println("onNext Thread: " + Thread.currentThread());
-                System.out.println("ThreadContext in onNext: " + HystrixRequestContext.isCurrentThreadInitialized());
+                System.out.println("ThreadContext in onNext: " + HystrixRequestLifetime.isCurrentThreadInitialized());
                 onErrorThread.set(Thread.currentThread());
-                isRequestContextInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                isRequestContextInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
             }
 
         }).subscribe(ts);
@@ -2962,7 +2962,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
                     @Override
                     public void call(Subscriber<? super Boolean> s) {
-                        results.isContextInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                        results.isContextInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                         results.originThread.set(Thread.currentThread());
                         s.onNext(true);
                         s.onCompleted();
@@ -2979,7 +2979,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
             @Override
             public void call(Notification<? super Boolean> n) {
-                results.isContextInitializedObserveOn.set(HystrixRequestContext.isCurrentThreadInitialized());
+                results.isContextInitializedObserveOn.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                 results.observeOnThread.set(Thread.currentThread());
             }
 
@@ -3013,7 +3013,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
                     @Override
                     public void call(Subscriber<? super Boolean> s) {
-                        results.isContextInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                        results.isContextInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                         results.originThread.set(Thread.currentThread());
                         s.onError(new RuntimeException("graceful onError"));
                     }
@@ -3029,7 +3029,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
             @Override
             public void call(Notification<? super Boolean> n) {
-                results.isContextInitializedObserveOn.set(HystrixRequestContext.isCurrentThreadInitialized());
+                results.isContextInitializedObserveOn.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                 results.observeOnThread.set(Thread.currentThread());
             }
 
@@ -3062,7 +3062,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
                     @Override
                     public void call(Subscriber<? super Boolean> s) {
-                        results.isContextInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                        results.isContextInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                         results.originThread.set(Thread.currentThread());
                         throw new RuntimeException("bad onError");
                     }
@@ -3078,7 +3078,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
             @Override
             public void call(Notification<? super Boolean> n) {
-                results.isContextInitializedObserveOn.set(HystrixRequestContext.isCurrentThreadInitialized());
+                results.isContextInitializedObserveOn.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                 results.observeOnThread.set(Thread.currentThread());
             }
 
@@ -3123,7 +3123,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
                     @Override
                     public void call(Subscriber<? super Boolean> s) {
-                        results.isContextInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                        results.isContextInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                         results.originThread.set(Thread.currentThread());
                         s.onNext(false);
                         s.onCompleted();
@@ -3140,7 +3140,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
             @Override
             public void call(Notification<? super Boolean> n) {
-                results.isContextInitializedObserveOn.set(HystrixRequestContext.isCurrentThreadInitialized());
+                results.isContextInitializedObserveOn.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                 results.observeOnThread.set(Thread.currentThread());
             }
 
@@ -3228,7 +3228,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
                     @Override
                     public void call(Subscriber<? super Boolean> s) {
-                        results.isContextInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                        results.isContextInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                         results.originThread.set(Thread.currentThread());
                         s.onNext(false);
                         s.onCompleted();
@@ -3245,7 +3245,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
             @Override
             public void call(Notification<? super Boolean> n) {
-                results.isContextInitializedObserveOn.set(HystrixRequestContext.isCurrentThreadInitialized());
+                results.isContextInitializedObserveOn.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                 results.observeOnThread.set(Thread.currentThread());
             }
 
@@ -3297,7 +3297,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
                     @Override
                     public void call(Subscriber<? super Boolean> s) {
-                        results.isContextInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                        results.isContextInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                         results.originThread.set(Thread.currentThread());
                         s.onNext(false);
                         s.onCompleted();
@@ -3314,7 +3314,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
             @Override
             public void call(Notification<? super Boolean> n) {
-                results.isContextInitializedObserveOn.set(HystrixRequestContext.isCurrentThreadInitialized());
+                results.isContextInitializedObserveOn.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                 results.observeOnThread.set(Thread.currentThread());
             }
 
@@ -3349,7 +3349,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
                     @Override
                     public void call(Subscriber<? super Boolean> s) {
-                        results.isContextInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                        results.isContextInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                         results.originThread.set(Thread.currentThread());
                         try {
                             Thread.sleep(500);
@@ -3368,7 +3368,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
             @Override
             public void call(Notification<? super Boolean> n) {
-                results.isContextInitializedObserveOn.set(HystrixRequestContext.isCurrentThreadInitialized());
+                results.isContextInitializedObserveOn.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                 results.observeOnThread.set(Thread.currentThread());
             }
 
@@ -3417,7 +3417,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
 
                     @Override
                     public void call(Subscriber<? super Boolean> s) {
-                        results.isContextInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                        results.isContextInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                         results.originThread.set(Thread.currentThread());
                         s.onNext(false);
                         s.onCompleted();
@@ -3435,7 +3435,7 @@ public class HystrixObservableCommandTest extends CommonHystrixCommandTests<Test
             @Override
             public void call(Notification<? super Boolean> n) {
                 System.out.println("timeoutWithFallback notification: " + n + "   " + Thread.currentThread());
-                results.isContextInitializedObserveOn.set(HystrixRequestContext.isCurrentThreadInitialized());
+                results.isContextInitializedObserveOn.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                 results.observeOnThread.set(Thread.currentThread());
             }
 

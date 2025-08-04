@@ -26,7 +26,7 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixContextRunnable;
 import com.netflix.hystrix.strategy.concurrency.HystrixContextScheduler;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import com.netflix.hystrix.strategy.properties.HystrixProperty;
 import org.junit.After;
@@ -2144,7 +2144,7 @@ public class HystrixCommandTest extends CommonHystrixCommandTests<TestHystrixCom
     @Test
     public void testBasicExecutionWorksWithoutRequestVariable() throws Exception {
         /* force the RequestVariable to not be initialized */
-        HystrixRequestContext.setContextOnCurrentThread(null);
+        HystrixRequestLifetime.setContextOnCurrentThread(null);
 
         TestHystrixCommand<Boolean> command = new SuccessfulTestCommand();
         assertEquals(true, command.execute());
@@ -2159,7 +2159,7 @@ public class HystrixCommandTest extends CommonHystrixCommandTests<TestHystrixCom
     @Test(expected = HystrixRuntimeException.class)
     public void testCacheKeyExecutionRequiresRequestVariable() throws Exception {
         /* force the RequestVariable to not be initialized */
-        HystrixRequestContext.setContextOnCurrentThread(null);
+        HystrixRequestLifetime.setContextOnCurrentThread(null);
 
         TestCircuitBreaker circuitBreaker = new TestCircuitBreaker();
 
@@ -2769,9 +2769,9 @@ public class HystrixCommandTest extends CommonHystrixCommandTests<TestHystrixCom
             public void call(Throwable t1) {
                 System.out.println("onError: " + t1);
                 System.out.println("onError Thread: " + Thread.currentThread());
-                System.out.println("ThreadContext in onError: " + HystrixRequestContext.isCurrentThreadInitialized());
+                System.out.println("ThreadContext in onError: " + HystrixRequestLifetime.isCurrentThreadInitialized());
                 onErrorThread.set(Thread.currentThread());
-                isRequestContextInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                isRequestContextInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
             }
 
         }).subscribe(ts);

@@ -31,7 +31,7 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixEventType;
 import com.netflix.hystrix.HystrixInvokableInfo;
 import com.netflix.hystrix.HystrixRequestLog;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 /**
  * Sample {@link HystrixCollapser} that automatically batches multiple requests to execute()/queue()
@@ -87,7 +87,7 @@ public class CommandCollapserGetValueForKey extends HystrixCollapser<List<String
 
         @Test
         public void testCollapser() throws Exception {
-            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
             try {
                 Future<String> f1 = new CommandCollapserGetValueForKey(1).queue();
                 Future<String> f2 = new CommandCollapserGetValueForKey(2).queue();

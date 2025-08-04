@@ -26,7 +26,7 @@ import com.netflix.hystrix.HystrixEventType;
 import com.netflix.hystrix.HystrixInvokableInfo;
 import com.netflix.hystrix.HystrixRequestLog;
 import com.netflix.hystrix.HystrixThreadPoolKey;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 /**
  * Sample {@link HystrixCommand} that implements fallback logic that requires
@@ -90,7 +90,7 @@ public class CommandWithFallbackViaNetwork extends HystrixCommand<String> {
 
         @Test
         public void test() {
-            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
             try {
                 assertEquals(null, new CommandWithFallbackViaNetwork(1).execute());
 

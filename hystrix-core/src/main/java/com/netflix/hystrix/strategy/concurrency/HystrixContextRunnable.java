@@ -20,24 +20,24 @@ import java.util.concurrent.Callable;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 
 /**
- * Wrapper around {@link Runnable} that manages the {@link HystrixRequestContext} initialization and cleanup for the execution of the {@link Runnable}
+ * Wrapper around {@link Runnable} that manages the {@link HystrixRequestLifetime} initialization and cleanup for the execution of the {@link Runnable}
  * 
  * @ExcludeFromJavadoc
  */
 public class HystrixContextRunnable implements Runnable {
 
     private final Callable<Void> actual;
-    private final HystrixRequestContext parentThreadState;
+    private final HystrixRequestLifetime parentThreadState;
 
     public HystrixContextRunnable(Runnable actual) {
         this(HystrixPlugins.getInstance().getConcurrencyStrategy(), actual);
     }
     
     public HystrixContextRunnable(HystrixConcurrencyStrategy concurrencyStrategy, final Runnable actual) {
-        this(concurrencyStrategy, HystrixRequestContext.getContextForCurrentThread(), actual);
+        this(concurrencyStrategy, HystrixRequestLifetime.getContextForCurrentThread(), actual);
     }
 
-    public HystrixContextRunnable(final HystrixConcurrencyStrategy concurrencyStrategy, final HystrixRequestContext hystrixRequestContext, final Runnable actual) {
+    public HystrixContextRunnable(final HystrixConcurrencyStrategy concurrencyStrategy, final HystrixRequestLifetime hystrixRequestContext, final Runnable actual) {
         this.actual = concurrencyStrategy.wrapCallable(new Callable<Void>() {
 
             @Override
@@ -52,10 +52,10 @@ public class HystrixContextRunnable implements Runnable {
 
     @Override
     public void run() {
-        HystrixRequestContext existingState = HystrixRequestContext.getContextForCurrentThread();
+        HystrixRequestLifetime existingState = HystrixRequestLifetime.getContextForCurrentThread();
         try {
             // set the state of this thread to that of its parent
-            HystrixRequestContext.setContextOnCurrentThread(parentThreadState);
+            HystrixRequestLifetime.setContextOnCurrentThread(parentThreadState);
             // execute actual Callable with the state of the parent
             try {
                 actual.call();
@@ -64,7 +64,7 @@ public class HystrixContextRunnable implements Runnable {
             }
         } finally {
             // restore this thread back to its original state
-            HystrixRequestContext.setContextOnCurrentThread(existingState);
+            HystrixRequestLifetime.setContextOnCurrentThread(existingState);
         }
     }
 

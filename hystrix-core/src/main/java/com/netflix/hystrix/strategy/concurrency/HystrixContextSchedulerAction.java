@@ -23,7 +23,7 @@ import rx.functions.Func2;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 
 /**
- * Wrapper around {@link Func2} that manages the {@link HystrixRequestContext} initialization and cleanup for the execution of the {@link Func2}
+ * Wrapper around {@link Func2} that manages the {@link HystrixRequestLifetime} initialization and cleanup for the execution of the {@link Func2}
  * 
  * @param <T>
  *            Return type of {@link Func2}
@@ -33,7 +33,7 @@ import com.netflix.hystrix.strategy.HystrixPlugins;
 public class HystrixContextSchedulerAction implements Action0 {
 
     private final Action0 actual;
-    private final HystrixRequestContext parentThreadState;
+    private final HystrixRequestLifetime parentThreadState;
     private final Callable<Void> c;
 
     public HystrixContextSchedulerAction(Action0 action) {
@@ -42,22 +42,22 @@ public class HystrixContextSchedulerAction implements Action0 {
 
     public HystrixContextSchedulerAction(final HystrixConcurrencyStrategy concurrencyStrategy, Action0 action) {
         this.actual = action;
-        this.parentThreadState = HystrixRequestContext.getContextForCurrentThread();
+        this.parentThreadState = HystrixRequestLifetime.getContextForCurrentThread();
 
         this.c = concurrencyStrategy.wrapCallable(new Callable<Void>() {
 
             @Override
             public Void call() throws Exception {
-                HystrixRequestContext existingState = HystrixRequestContext.getContextForCurrentThread();
+                HystrixRequestLifetime existingState = HystrixRequestLifetime.getContextForCurrentThread();
                 try {
                     // set the state of this thread to that of its parent
-                    HystrixRequestContext.setContextOnCurrentThread(parentThreadState);
+                    HystrixRequestLifetime.setContextOnCurrentThread(parentThreadState);
                     // execute actual Action0 with the state of the parent
                     actual.call();
                     return null;
                 } finally {
                     // restore this thread back to its original state
-                    HystrixRequestContext.setContextOnCurrentThread(existingState);
+                    HystrixRequestLifetime.setContextOnCurrentThread(existingState);
                 }
             }
         });

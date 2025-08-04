@@ -26,7 +26,7 @@ import com.netflix.hystrix.contrib.javanica.exception.HystrixCachingException;
 import com.netflix.hystrix.contrib.javanica.test.common.BasicHystrixTest;
 import com.netflix.hystrix.contrib.javanica.test.common.domain.Profile;
 import com.netflix.hystrix.contrib.javanica.test.common.domain.User;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -207,7 +207,7 @@ public abstract class BasicCacheTest extends BasicHystrixTest {
 
     @Test(expected = HystrixCachingException.class)
     public void testGetUser_givenWrongCacheKeyMethodReturnType_shouldThrowException() {
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
         try {
             User user = userService.getUserByName("name");
         } finally {
@@ -217,7 +217,7 @@ public abstract class BasicCacheTest extends BasicHystrixTest {
 
     @Test(expected = HystrixCachingException.class)
     public void testGetUserByName_givenNonexistentCacheKeyMethod_shouldThrowException() {
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
         try {
             User user = userService.getUser();
         } finally {

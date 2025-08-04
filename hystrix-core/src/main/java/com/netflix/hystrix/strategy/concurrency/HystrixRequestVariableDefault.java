@@ -21,19 +21,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implementation of {@link HystrixRequestVariable}. Similar to {@link ThreadLocal} but scoped at the user request level. Context is managed via {@link HystrixRequestContext}.
+ * Default implementation of {@link HystrixRequestVariable}. Similar to {@link ThreadLocal} but scoped at the user request level. Context is managed via {@link HystrixRequestLifetime}.
  * <p>
  * All statements below assume that child threads are spawned and initialized with the use of {@link HystrixContextCallable} or {@link HystrixContextRunnable} which capture state from a parent thread
  * and propagate to the child thread.
  * <p>
  * Characteristics that differ from ThreadLocal:
  * <ul>
- * <li>HystrixRequestVariable context must be initialized at the beginning of every request by {@link HystrixRequestContext#initializeContext}</li>
- * <li>HystrixRequestVariables attached to a thread will be cleared at the end of every user request by {@link HystrixRequestContext#shutdown} which execute {@link #remove} for each
+ * <li>HystrixRequestVariable context must be initialized at the beginning of every request by {@link HystrixRequestLifetime#initializeContext}</li>
+ * <li>HystrixRequestVariables attached to a thread will be cleared at the end of every user request by {@link HystrixRequestLifetime#shutdown} which execute {@link #remove} for each
  * HystrixRequestVariable</li>
- * <li>HystrixRequestVariables have a {@link #shutdown} lifecycle method that gets called at the end of every user request (invoked when {@link HystrixRequestContext#shutdown} is called) to allow for
+ * <li>HystrixRequestVariables have a {@link #shutdown} lifecycle method that gets called at the end of every user request (invoked when {@link HystrixRequestLifetime#shutdown} is called) to allow for
  * resource cleanup.</li>
- * <li>HystrixRequestVariables are copied (by reference) to child threads via the {@link HystrixRequestContext#getContextForCurrentThread} and {@link HystrixRequestContext#setContextOnCurrentThread}
+ * <li>HystrixRequestVariables are copied (by reference) to child threads via the {@link HystrixRequestLifetime#getContextForCurrentThread} and {@link HystrixRequestLifetime#setContextOnCurrentThread}
  * functionality.</li>
  * <li>HystrixRequestVariables created on a child thread are available on sibling and parent threads.</li>
  * <li>HystrixRequestVariables created on a child thread will be cleaned up by the parent thread via the {@link #shutdown} method.</li>
@@ -59,7 +59,7 @@ public class HystrixRequestVariableDefault<T> implements HystrixRequestVariable<
 
     /**
      * Creates a new HystrixRequestVariable that will exist across all threads
-     * within a {@link HystrixRequestContext}
+     * within a {@link HystrixRequestLifetime}
      */
     public HystrixRequestVariableDefault() {
     }
@@ -72,10 +72,10 @@ public class HystrixRequestVariableDefault<T> implements HystrixRequestVariable<
      */
     @SuppressWarnings("unchecked")
     public T get() {
-        if (HystrixRequestContext.getContextForCurrentThread() == null) {
-            throw new IllegalStateException(HystrixRequestContext.class.getSimpleName() + ".initializeContext() must be called at the beginning of each request before RequestVariable functionality can be used.");
+        if (HystrixRequestLifetime.getContextForCurrentThread() == null) {
+            throw new IllegalStateException(HystrixRequestLifetime.class.getSimpleName() + ".initializeContext() must be called at the beginning of each request before RequestVariable functionality can be used.");
         }
-        ConcurrentHashMap<HystrixRequestVariableDefault<?>, LazyInitializer<?>> variableMap = HystrixRequestContext.getContextForCurrentThread().state;
+        ConcurrentHashMap<HystrixRequestVariableDefault<?>, LazyInitializer<?>> variableMap = HystrixRequestLifetime.getContextForCurrentThread().state;
 
         // short-circuit the synchronized path below if we already have the value in the ConcurrentHashMap
         LazyInitializer<?> v = variableMap.get(this);
@@ -132,7 +132,7 @@ public class HystrixRequestVariableDefault<T> implements HystrixRequestVariable<
      *            the value to set
      */
     public void set(T value) {
-        HystrixRequestContext.getContextForCurrentThread().state.put(this, new LazyInitializer<T>(this, value));
+        HystrixRequestLifetime.getContextForCurrentThread().state.put(this, new LazyInitializer<T>(this, value));
     }
 
     /**
@@ -143,13 +143,13 @@ public class HystrixRequestVariableDefault<T> implements HystrixRequestVariable<
      * If the value is subsequently fetched in the thread, the {@link #initialValue} method will be called again.
      */
     public void remove() {
-        if (HystrixRequestContext.getContextForCurrentThread() != null) {
-            remove(HystrixRequestContext.getContextForCurrentThread(), this);
+        if (HystrixRequestLifetime.getContextForCurrentThread() != null) {
+            remove(HystrixRequestLifetime.getContextForCurrentThread(), this);
         }
     }
 
     @SuppressWarnings("unchecked")
-    /* package */static <T> void remove(HystrixRequestContext context, HystrixRequestVariableDefault<T> v) {
+    /* package */static <T> void remove(HystrixRequestLifetime context, HystrixRequestVariableDefault<T> v) {
         // remove first so no other threads get it
         LazyInitializer<?> o = context.state.remove(v);
         if (o != null) {
@@ -162,7 +162,7 @@ public class HystrixRequestVariableDefault<T> implements HystrixRequestVariable<
      * Provide life-cycle hook for a HystrixRequestVariable implementation to perform cleanup
      * before the HystrixRequestVariable is removed from the current thread.
      * <p>
-     * This is executed at the end of each user request when {@link HystrixRequestContext#shutdown} is called or whenever {@link #remove} is invoked.
+     * This is executed at the end of each user request when {@link HystrixRequestLifetime#shutdown} is called or whenever {@link #remove} is invoked.
      * <p>
      * By default does nothing.
      * <p>

@@ -18,7 +18,7 @@ package com.netflix.hystrix.metric.consumer;
 import com.netflix.hystrix.HystrixCollapserKey;
 import com.netflix.hystrix.metric.CachedValuesHistogram;
 import com.netflix.hystrix.metric.CommandStreamTest;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,11 +33,11 @@ import static org.junit.Assert.fail;
 
 public class RollingCollapserBatchSizeDistributionStreamTest extends CommandStreamTest {
     RollingCollapserBatchSizeDistributionStream stream;
-    HystrixRequestContext context;
+    HystrixRequestLifetime context;
 
     @Before
     public void setUp() {
-        context = HystrixRequestContext.initializeContext();
+        context = HystrixRequestLifetime.initializeContext();
     }
 
     @After

@@ -29,14 +29,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.netflix.hystrix.HystrixRequestLog;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 /**
  * Add <code>HystrixRequestLog.getCurrentRequest().getExecutedCommandsAsString()</code> to response as header "X-HystrixLog".
  * <p>
  * This will not work if the response has been flushed already.
  * <p>
- * A pre-requisite is that {@link HystrixRequestContext} is initialized, such as by using {@link HystrixRequestContextServletFilter}.
+ * A pre-requisite is that {@link HystrixRequestLifetime} is initialized, such as by using {@link HystrixRequestContextServletFilter}.
  * <p>
  * Install by adding the following lines to your project web.xml:
  * <p>
@@ -63,7 +63,7 @@ public class HystrixRequestLogViaResponseHeaderServletFilter implements Filter {
             chain.doFilter(request, response);
         } finally {
             try {
-                if (HystrixRequestContext.isCurrentThreadInitialized()) {
+                if (HystrixRequestLifetime.isCurrentThreadInitialized()) {
                     HystrixRequestLog log = HystrixRequestLog.getCurrentRequest();
                     if (log != null) {
                         ((HttpServletResponse) response).addHeader("X-HystrixLog", log.getExecutedCommandsAsString());

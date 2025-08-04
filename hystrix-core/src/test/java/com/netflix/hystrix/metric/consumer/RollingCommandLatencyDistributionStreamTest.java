@@ -23,7 +23,7 @@ import com.netflix.hystrix.HystrixRequestLog;
 import com.netflix.hystrix.metric.CachedValuesHistogram;
 import com.netflix.hystrix.metric.CommandStreamTest;
 import com.netflix.hystrix.strategy.concurrency.HystrixContextRunnable;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,12 +38,12 @@ import static org.junit.Assert.*;
 
 public class RollingCommandLatencyDistributionStreamTest extends CommandStreamTest {
     RollingCommandLatencyDistributionStream stream;
-    HystrixRequestContext context;
+    HystrixRequestLifetime context;
     static HystrixCommandGroupKey groupKey = HystrixCommandGroupKey.Factory.asKey("CommandLatency");
 
     @Before
     public void setUp() {
-        context = HystrixRequestContext.initializeContext();
+        context = HystrixRequestLifetime.initializeContext();
     }
 
     @After

@@ -40,7 +40,7 @@ import com.netflix.hystrix.HystrixRequestLog;
  * with a
  * message such as: <blockquote> HystrixRequestContext.initializeContext() must be called at the beginning of each request before RequestVariable functionality can be used. </blockquote>
  * <p>
- * Example ServletFilter for initializing {@link HystrixRequestContext} at the beginning of an HTTP request and shutting down at the end:
+ * Example ServletFilter for initializing {@link HystrixRequestLifetime} at the beginning of an HTTP request and shutting down at the end:
  * 
  * <blockquote>
  * 
@@ -61,7 +61,7 @@ import com.netflix.hystrix.HystrixRequestLog;
  * <p>
  * <b>NOTE:</b> If <code>initializeContext()</code> is called then <code>shutdown()</code> must also be called or a memory leak will occur.
  */
-public class HystrixRequestContext implements Closeable {
+public class HystrixRequestLifetime implements Closeable {
 
     /*
      * ThreadLocal on each thread will hold the HystrixRequestVariableState.
@@ -73,15 +73,15 @@ public class HystrixRequestContext implements Closeable {
      * HystrixRequestContext object with the ConcurrentHashMap within it nulled out since once it is nullified
      * from the parent thread it is shared across all child threads.
      */
-    private static ThreadLocal<HystrixRequestContext> requestVariables = new ThreadLocal<HystrixRequestContext>();
+    private static ThreadLocal<HystrixRequestLifetime> requestVariables = new ThreadLocal<HystrixRequestLifetime>();
 
     public static boolean isCurrentThreadInitialized() {
-        HystrixRequestContext context = requestVariables.get();
+        HystrixRequestLifetime context = requestVariables.get();
         return context != null && context.state != null;
     }
 
-    public static HystrixRequestContext getContextForCurrentThread() {
-        HystrixRequestContext context = requestVariables.get();
+    public static HystrixRequestLifetime getContextForCurrentThread() {
+        HystrixRequestLifetime context = requestVariables.get();
         if (context != null && context.state != null) {
             // context.state can be null when context is not null
             // if a thread is being re-used and held a context previously, the context was shut down
@@ -92,7 +92,7 @@ public class HystrixRequestContext implements Closeable {
         }
     }
 
-    public static void setContextOnCurrentThread(HystrixRequestContext state) {
+    public static void setContextOnCurrentThread(HystrixRequestLifetime state) {
         requestVariables.set(state);
     }
 
@@ -105,8 +105,8 @@ public class HystrixRequestContext implements Closeable {
      * <p>
      * See class header JavaDoc for example Servlet Filter implementation that initializes and shuts down the context.
      */
-    public static HystrixRequestContext initializeContext() {
-        HystrixRequestContext state = new HystrixRequestContext();
+    public static HystrixRequestLifetime initializeContext() {
+        HystrixRequestLifetime state = new HystrixRequestLifetime();
         requestVariables.set(state);
         return state;
     }
@@ -119,7 +119,7 @@ public class HystrixRequestContext implements Closeable {
     /* package */ConcurrentHashMap<HystrixRequestVariableDefault<?>, HystrixRequestVariableDefault.LazyInitializer<?>> state = new ConcurrentHashMap<HystrixRequestVariableDefault<?>, HystrixRequestVariableDefault.LazyInitializer<?>>();
 
     // instantiation should occur via static factory methods.
-    private HystrixRequestContext() {
+    private HystrixRequestLifetime() {
 
     }
 

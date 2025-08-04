@@ -21,7 +21,7 @@ import org.junit.Test;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 /**
  * Sample {@link HystrixCommand} showing how implementing the {@link #getCacheKey()} method
@@ -50,7 +50,7 @@ public class CommandUsingRequestCache extends HystrixCommand<Boolean> {
 
         @Test
         public void testWithoutCacheHits() {
-            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
             try {
                 assertTrue(new CommandUsingRequestCache(2).execute());
                 assertFalse(new CommandUsingRequestCache(1).execute());
@@ -63,7 +63,7 @@ public class CommandUsingRequestCache extends HystrixCommand<Boolean> {
 
         @Test
         public void testWithCacheHits() {
-            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
             try {
                 CommandUsingRequestCache command2a = new CommandUsingRequestCache(2);
                 CommandUsingRequestCache command2b = new CommandUsingRequestCache(2);
@@ -80,7 +80,7 @@ public class CommandUsingRequestCache extends HystrixCommand<Boolean> {
             }
 
             // start a new request context
-            context = HystrixRequestContext.initializeContext();
+            context = HystrixRequestLifetime.initializeContext();
             try {
                 CommandUsingRequestCache command3b = new CommandUsingRequestCache(2);
                 assertTrue(command3b.execute());

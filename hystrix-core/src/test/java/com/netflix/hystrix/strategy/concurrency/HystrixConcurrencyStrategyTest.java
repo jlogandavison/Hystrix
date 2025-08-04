@@ -22,7 +22,7 @@ import java.lang.IllegalStateException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class HystrixConcurrencyStrategyTest {
     @Before
     public void prepareForTest() {
         /* we must call this to simulate a new request lifecycle running and clearing caches */
-        HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime.initializeContext();
     }
 
     @After
@@ -82,7 +82,7 @@ public class HystrixConcurrencyStrategyTest {
 
         @Override
         protected String run() throws Exception {
-            if (HystrixRequestContext.isCurrentThreadInitialized()) {
+            if (HystrixRequestLifetime.isCurrentThreadInitialized()) {
                 System.out.println("Executing => Commands: " + HystrixRequestLog.getCurrentRequest().getAllExecutedCommands());
             }
             return "Hello";
@@ -97,13 +97,13 @@ public class HystrixConcurrencyStrategyTest {
                 .doOnError(new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        isInitialized.set(HystrixRequestContext.isCurrentThreadInitialized());
+                        isInitialized.set(HystrixRequestLifetime.isCurrentThreadInitialized());
                     }
                 })
                 .materialize()
                 .toBlocking().single();
 
-        System.out.println("initialized = " + HystrixRequestContext.isCurrentThreadInitialized());
+        System.out.println("initialized = " + HystrixRequestLifetime.isCurrentThreadInitialized());
         System.out.println("initialized inside onError = " + isInitialized.get());
         assertEquals(true, isInitialized.get());
     }
@@ -120,9 +120,9 @@ public class HystrixConcurrencyStrategyTest {
 
     private void shutdownContextIfExists() {
         // instead of storing the reference from initialize we'll just get the current state and shutdown
-        if (HystrixRequestContext.getContextForCurrentThread() != null) {
+        if (HystrixRequestLifetime.getContextForCurrentThread() != null) {
             // it could have been set NULL by the test
-            HystrixRequestContext.getContextForCurrentThread().shutdown();
+            HystrixRequestLifetime.getContextForCurrentThread().shutdown();
         }
     }
     private static class DummyHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy {}

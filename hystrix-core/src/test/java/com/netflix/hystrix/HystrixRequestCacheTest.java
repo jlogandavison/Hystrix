@@ -26,7 +26,7 @@ import rx.Subscriber;
 
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategyDefault;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import rx.Subscription;
 import rx.subjects.ReplaySubject;
 
@@ -35,7 +35,7 @@ public class HystrixRequestCacheTest {
     @Test
     public void testCache() {
         HystrixConcurrencyStrategy strategy = HystrixConcurrencyStrategyDefault.getInstance();
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
         try {
             HystrixRequestCache cache1 = HystrixRequestCache.getInstance(HystrixCommandKey.Factory.asKey("command1"), strategy);
             cache1.putIfAbsent("valueA", new TestObservable("a1"));
@@ -57,7 +57,7 @@ public class HystrixRequestCacheTest {
             context.shutdown();
         }
 
-        context = HystrixRequestContext.initializeContext();
+        context = HystrixRequestLifetime.initializeContext();
         try {
             // with a new context  the instance should have nothing in it
             HystrixRequestCache cache = HystrixRequestCache.getInstance(HystrixCommandKey.Factory.asKey("command1"), strategy);
@@ -79,7 +79,7 @@ public class HystrixRequestCacheTest {
     @Test
     public void testClearCache() {
         HystrixConcurrencyStrategy strategy = HystrixConcurrencyStrategyDefault.getInstance();
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
         try {
             HystrixRequestCache cache1 = HystrixRequestCache.getInstance(HystrixCommandKey.Factory.asKey("command1"), strategy);
             cache1.putIfAbsent("valueA", new TestObservable("a1"));

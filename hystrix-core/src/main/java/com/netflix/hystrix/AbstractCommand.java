@@ -25,7 +25,7 @@ import com.netflix.hystrix.exception.HystrixTimeoutException;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
 import com.netflix.hystrix.strategy.concurrency.HystrixContextRunnable;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import com.netflix.hystrix.strategy.eventnotifier.HystrixEventNotifier;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisherFactory;
@@ -567,7 +567,7 @@ import java.util.concurrent.atomic.AtomicReference;
      * @return R
      */
     private Observable<R> executeCommandAndObserve(final AbstractCommand<R> _cmd) {
-        final HystrixRequestContext currentRequestContext = HystrixRequestContext.getContextForCurrentThread();
+        final HystrixRequestLifetime currentRequestContext = HystrixRequestLifetime.getContextForCurrentThread();
 
         final Action1<R> markEmits = new Action1<R>() {
             @Override
@@ -756,7 +756,7 @@ import java.util.concurrent.atomic.AtomicReference;
      *             if getFallback() fails (throws an Exception) or is rejected by the semaphore
      */
     private Observable<R> getFallbackOrThrowException(final AbstractCommand<R> _cmd, final HystrixEventType eventType, final FailureType failureType, final String message, final Exception originalException) {
-        final HystrixRequestContext requestContext = HystrixRequestContext.getContextForCurrentThread();
+        final HystrixRequestLifetime requestContext = HystrixRequestLifetime.getContextForCurrentThread();
         long latency = System.currentTimeMillis() - executionResult.getStartTimestamp();
         // record the executionResult
         // do this before executing fallback so it can be queried from within getFallback (see See https://github.com/Netflix/Hystrix/pull/144)
@@ -1134,7 +1134,7 @@ import java.util.concurrent.atomic.AtomicReference;
             child.add(s);
 
             //capture the HystrixRequestContext upfront so that we can use it in the timeout thread later
-            final HystrixRequestContext hystrixRequestContext = HystrixRequestContext.getContextForCurrentThread();
+            final HystrixRequestLifetime hystrixRequestContext = HystrixRequestLifetime.getContextForCurrentThread();
 
             TimerListener listener = new TimerListener() {
 
@@ -1220,10 +1220,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
     }
 
-    private static void setRequestContextIfNeeded(final HystrixRequestContext currentRequestContext) {
-        if (!HystrixRequestContext.isCurrentThreadInitialized()) {
+    private static void setRequestContextIfNeeded(final HystrixRequestLifetime currentRequestContext) {
+        if (!HystrixRequestLifetime.isCurrentThreadInitialized()) {
             // even if the user Observable doesn't have context we want it set for chained operators
-            HystrixRequestContext.setContextOnCurrentThread(currentRequestContext);
+            HystrixRequestLifetime.setContextOnCurrentThread(currentRequestContext);
         }
     }
 

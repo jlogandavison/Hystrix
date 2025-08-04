@@ -18,7 +18,7 @@ package com.netflix.hystrix;
 import com.netflix.hystrix.metric.HystrixRequestEventsStream;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableHolder;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableLifecycle;
 import org.slf4j.Logger;
@@ -77,7 +77,7 @@ public class HystrixRequestLog {
     }
 
     /**
-     * {@link HystrixRequestLog} for current request as defined by {@link HystrixRequestContext}.
+     * {@link HystrixRequestLog} for current request as defined by {@link HystrixRequestLifetime}.
      * 
      * @return {@link HystrixRequestLog}
      */
@@ -86,7 +86,7 @@ public class HystrixRequestLog {
     }
 
     /**
-     * {@link HystrixRequestLog} for current request as defined by {@link HystrixRequestContext}.
+     * {@link HystrixRequestLog} for current request as defined by {@link HystrixRequestLifetime}.
      * <p>
      * NOTE: This uses the default {@link HystrixConcurrencyStrategy} or global override. If an injected strategy is being used by commands you must instead use
      * {@link #getCurrentRequest(HystrixConcurrencyStrategy)}.
@@ -98,7 +98,7 @@ public class HystrixRequestLog {
     }
 
     /**
-     * Retrieve {@link HystrixCommand} instances that were executed during this {@link HystrixRequestContext}.
+     * Retrieve {@link HystrixCommand} instances that were executed during this {@link HystrixRequestLifetime}.
      * 
      * @return {@code Collection<HystrixCommand<?>>}
      */
@@ -108,7 +108,7 @@ public class HystrixRequestLog {
     }
 
     /**
-     * Retrieve {@link HystrixCommand} instances that were executed during this {@link HystrixRequestContext}.
+     * Retrieve {@link HystrixCommand} instances that were executed during this {@link HystrixRequestLifetime}.
      * 
      * @return {@code Collection<HystrixCommand<?>>}
      */

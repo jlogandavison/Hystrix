@@ -17,7 +17,7 @@ package com.netflix.hystrix;
 
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableLifecycle;
@@ -39,7 +39,7 @@ public class HystrixCommandTestWithCustomConcurrencyStrategy {
 
     @After
     public void reset() {
-        HystrixRequestContext.setContextOnCurrentThread(null);
+        HystrixRequestLifetime.setContextOnCurrentThread(null);
         HystrixPropertiesFactory.reset();
         HystrixPlugins.reset();
     }
@@ -59,7 +59,7 @@ public class HystrixCommandTestWithCustomConcurrencyStrategy {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(strategy);
 
         //context is set up properly
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
         HystrixCommand<Boolean> cmd = new TestCommand(true, true);
         assertTrue(cmd.execute());
         printRequestLog();
@@ -83,7 +83,7 @@ public class HystrixCommandTestWithCustomConcurrencyStrategy {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(strategy);
 
         //context is not set up
-        HystrixRequestContext.setContextOnCurrentThread(null);
+        HystrixRequestLifetime.setContextOnCurrentThread(null);
         HystrixCommand<Boolean> cmd = new TestCommand(true, true);
         assertTrue(cmd.execute()); //command execution not affected by missing context
         printRequestLog();
@@ -107,7 +107,7 @@ public class HystrixCommandTestWithCustomConcurrencyStrategy {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(strategy);
 
         //context is set up properly
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
         HystrixCommand<Boolean> cmd = new TestCommand(true, true);
         assertTrue(cmd.execute());
         printRequestLog();
@@ -132,7 +132,7 @@ public class HystrixCommandTestWithCustomConcurrencyStrategy {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(strategy);
 
         //context is not set up
-        HystrixRequestContext.setContextOnCurrentThread(null);
+        HystrixRequestLifetime.setContextOnCurrentThread(null);
         HystrixCommand<Boolean> cmd = new TestCommand(true, true);
         assertTrue(cmd.execute()); //command execution not affected by missing context
         printRequestLog();
@@ -156,7 +156,7 @@ public class HystrixCommandTestWithCustomConcurrencyStrategy {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(strategy);
 
         //context is set up properly
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
         HystrixCommand<Boolean> cmd = new TestCommand(false, false);
         assertTrue(cmd.execute());
         printRequestLog();
@@ -181,7 +181,7 @@ public class HystrixCommandTestWithCustomConcurrencyStrategy {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(strategy);
 
         //context is not set up
-        HystrixRequestContext.setContextOnCurrentThread(null);
+        HystrixRequestLifetime.setContextOnCurrentThread(null);
         HystrixCommand<Boolean> cmd = new TestCommand(false, false);
         assertTrue(cmd.execute()); //command execution not affected by missing context
         printRequestLog();
@@ -206,7 +206,7 @@ public class HystrixCommandTestWithCustomConcurrencyStrategy {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(strategy);
 
         //context is set up properly
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
         HystrixCommand<Boolean> cmd = new TestCommand(true, true);
         assertTrue(cmd.execute());
         printRequestLog();
@@ -231,7 +231,7 @@ public class HystrixCommandTestWithCustomConcurrencyStrategy {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(strategy);
 
         //context is not set up
-        HystrixRequestContext.setContextOnCurrentThread(null);
+        HystrixRequestLifetime.setContextOnCurrentThread(null);
         HystrixCommand<Boolean> cmd = new TestCommand(true, true);
         assertTrue(cmd.execute()); //command execution unaffected by missing context
         printRequestLog();

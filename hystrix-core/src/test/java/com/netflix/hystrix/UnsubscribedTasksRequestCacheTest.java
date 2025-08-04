@@ -18,7 +18,7 @@ package com.netflix.hystrix;
 
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.netflix.hystrix.strategy.HystrixPlugins;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import org.junit.After;
 import org.junit.Before;
@@ -84,7 +84,7 @@ public class UnsubscribedTasksRequestCacheTest {
     public void testOneCommandIsUnsubscribed() throws ExecutionException, InterruptedException {
 
         HystrixPlugins.getInstance().registerCommandExecutionHook(new CommandExecutionHook());
-        final HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        final HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
         final AtomicInteger numCacheResponses = new AtomicInteger(0);
 
         try {
@@ -104,12 +104,12 @@ public class UnsubscribedTasksRequestCacheTest {
         }
     }
 
-    private Runnable createCommandRunnable(final HystrixRequestContext context, final AtomicInteger numCacheResponses) {
+    private Runnable createCommandRunnable(final HystrixRequestLifetime context, final AtomicInteger numCacheResponses) {
         return new Runnable() {
 
             public void run() {
 
-                HystrixRequestContext.setContextOnCurrentThread(context);
+                HystrixRequestLifetime.setContextOnCurrentThread(context);
 
                 CommandUsingRequestCache command2a = new CommandUsingRequestCache(2);
                 Future<Boolean> resultCommand2a = command2a.queue();

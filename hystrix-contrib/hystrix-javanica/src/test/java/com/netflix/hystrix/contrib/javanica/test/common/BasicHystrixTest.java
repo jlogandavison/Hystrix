@@ -20,7 +20,7 @@ import com.hystrix.junit.HystrixRequestContextRule;
 import com.netflix.hystrix.HystrixInvokableInfo;
 import com.netflix.hystrix.HystrixThreadPool;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import org.junit.Rule;
 
 import java.lang.reflect.Field;
@@ -32,7 +32,7 @@ public abstract class BasicHystrixTest {
     @Rule
     public HystrixRequestContextRule request = new HystrixRequestContextRule();
 
-    protected final HystrixRequestContext getHystrixContext() {
+    protected final HystrixRequestLifetime getHystrixContext() {
         return request.context();
     }
 

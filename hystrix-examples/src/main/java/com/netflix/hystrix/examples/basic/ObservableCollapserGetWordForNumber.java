@@ -45,7 +45,7 @@ import com.netflix.hystrix.HystrixObservableCommand;
 import com.netflix.hystrix.HystrixRequestLog;
 import com.netflix.hystrix.examples.basic.ObservableCommandNumbersToWords.NumberWord;
 import com.netflix.hystrix.strategy.concurrency.HystrixContextScheduler;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 /**
  * Example that uses {@link HystrixObservableCollapser} to batch multiple {@link ObservableCommandNumbersToWords} requests.
@@ -149,12 +149,12 @@ public class ObservableCollapserGetWordForNumber extends HystrixObservableCollap
 
 	public static class ObservableCollapserGetWordForNumberTest
 	{
-		private HystrixRequestContext ctx;
+		private HystrixRequestLifetime ctx;
 
 		@Before
 		public void before()
 		{
-			ctx = HystrixRequestContext.initializeContext();
+			ctx = HystrixRequestLifetime.initializeContext();
 			ObservableCollapserGetWordForNumber.resetCmdCounter();
 		}
 
@@ -209,7 +209,7 @@ public class ObservableCollapserGetWordForNumber extends HystrixObservableCollap
 
 		/**
 		 * Example where we subscribe on the computation scheduler. For this we need the {@link HystrixContextScheduler}, that
-		 * passes the {@link HystrixRequestContext} to the thread that runs the action.
+		 * passes the {@link HystrixRequestLifetime} to the thread that runs the action.
 		 */
 		@Test
 		public void shouldCollapseRequestsAsync()

@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.netflix.hystrix.strategy.concurrency.HystrixContextScheduler;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesCollapserDefault;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesFactory;
 import com.netflix.hystrix.util.HystrixTimer;
@@ -536,7 +536,7 @@ public class HystrixCollapserTest {
 
     @Test
     public void testRequestVariableLifecycle1() throws Exception {
-        HystrixRequestContext reqContext = HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime reqContext = HystrixRequestLifetime.initializeContext();
 
         // do actual work
         TestCollapserTimer timer = new TestCollapserTimer();
@@ -588,7 +588,7 @@ public class HystrixCollapserTest {
 
     @Test
     public void testRequestVariableLifecycle2() throws Exception {
-        final HystrixRequestContext reqContext = HystrixRequestContext.initializeContext();
+        final HystrixRequestLifetime reqContext = HystrixRequestLifetime.initializeContext();
 
         final TestCollapserTimer timer = new TestCollapserTimer();
         final ConcurrentLinkedQueue<Future<String>> responses = new ConcurrentLinkedQueue<Future<String>>();
