@@ -23,7 +23,7 @@ import com.netflix.hystrix.HystrixRequestLog;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.metric.CommandStreamTest;
 import com.netflix.hystrix.strategy.concurrency.HystrixContextRunnable;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 
 public class RollingThreadPoolMaxConcurrencyStreamTest extends CommandStreamTest {
     RollingThreadPoolMaxConcurrencyStream stream;
-    HystrixRequestContext context;
+    HystrixRequestLifetime context;
     ExecutorService threadPool;
 
     private static Subscriber<Integer> getSubscriber(final CountDownLatch latch) {
@@ -64,7 +64,7 @@ public class RollingThreadPoolMaxConcurrencyStreamTest extends CommandStreamTest
 
     @Before
     public void setUp() {
-        context = HystrixRequestContext.initializeContext();
+        context = HystrixRequestLifetime.initializeContext();
         threadPool = Executors.newFixedThreadPool(20);
     }
 

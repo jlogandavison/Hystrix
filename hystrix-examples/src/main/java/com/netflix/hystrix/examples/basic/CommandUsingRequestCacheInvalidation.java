@@ -24,7 +24,7 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixRequestCache;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategyDefault;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 /**
  * Example {@link HystrixCommand} implementation for handling the get-set-get use case within
@@ -95,7 +95,7 @@ public class CommandUsingRequestCacheInvalidation {
 
         @Test
         public void getGetSetGet() {
-            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
             try {
                 assertEquals("ValueBeforeSet_1", new GetterCommand(1).execute());
                 GetterCommand commandAgainstCache = new GetterCommand(1);

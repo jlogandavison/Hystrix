@@ -16,7 +16,7 @@
 package com.hystrix.junit;
 
 import com.netflix.hystrix.Hystrix;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import org.junit.rules.ExternalResource;
 
 /**
@@ -33,11 +33,11 @@ import org.junit.rules.ExternalResource;
  *
  */
 public final class HystrixRequestContextRule extends ExternalResource {
-    private HystrixRequestContext context;
+    private HystrixRequestLifetime context;
 
     @Override
     protected void before() {
-        this.context = HystrixRequestContext.initializeContext();
+        this.context = HystrixRequestLifetime.initializeContext();
         Hystrix.reset();
     }
 
@@ -49,7 +49,7 @@ public final class HystrixRequestContextRule extends ExternalResource {
         }
     }
 
-    public HystrixRequestContext context() {
+    public HystrixRequestLifetime context() {
         return this.context;
     }
 

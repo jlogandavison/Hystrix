@@ -19,7 +19,7 @@ package com.netflix.hystrix.strategy.concurrency;
  * Implementation of {@link HystrixRequestVariable} which forwards to the wrapped
  * {@link HystrixRequestVariableLifecycle}.
  * <p>
- * This implementation also returns null when {@link #get()} is called while the {@link HystrixRequestContext} has not
+ * This implementation also returns null when {@link #get()} is called while the {@link HystrixRequestLifetime} has not
  * been initialized rather than throwing an exception, allowing for use in a {@link HystrixConcurrencyStrategy} which
  * does not depend on an a HystrixRequestContext
  */
@@ -56,14 +56,14 @@ public class HystrixLifecycleForwardingRequestVariable<T> extends HystrixRequest
     }
 
     /**
-     * Return null if the {@link HystrixRequestContext} has not been initialized for the current thread.
+     * Return null if the {@link HystrixRequestLifetime} has not been initialized for the current thread.
      * <p>
-     * If {@link HystrixRequestContext} has been initialized then call method in superclass:
+     * If {@link HystrixRequestLifetime} has been initialized then call method in superclass:
      * {@link HystrixRequestVariableDefault#get()}
      */
     @Override
     public T get() {
-        if (!HystrixRequestContext.isCurrentThreadInitialized()) {
+        if (!HystrixRequestLifetime.isCurrentThreadInitialized()) {
             return null;
         }
         return super.get();

@@ -28,7 +28,7 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy;
 import com.netflix.hystrix.HystrixThreadPoolKey;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 /**
  * Sample {@link HystrixCommand} pattern using a semaphore-isolated command
@@ -121,7 +121,7 @@ public class CommandFacadeWithPrimarySecondary extends HystrixCommand<String> {
 
         @Test
         public void testPrimary() {
-            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
             try {
                 ConfigurationManager.getConfigInstance().setProperty("primarySecondary.usePrimary", true);
                 assertEquals("responseFromPrimary-20", new CommandFacadeWithPrimarySecondary(20).execute());
@@ -133,7 +133,7 @@ public class CommandFacadeWithPrimarySecondary extends HystrixCommand<String> {
 
         @Test
         public void testSecondary() {
-            HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
             try {
                 ConfigurationManager.getConfigInstance().setProperty("primarySecondary.usePrimary", false);
                 assertEquals("responseFromSecondary-20", new CommandFacadeWithPrimarySecondary(20).execute());

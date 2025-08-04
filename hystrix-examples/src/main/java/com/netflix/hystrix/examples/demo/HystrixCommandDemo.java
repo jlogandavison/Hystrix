@@ -28,7 +28,7 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandMetrics;
 import com.netflix.hystrix.HystrixCommandMetrics.HealthCounts;
 import com.netflix.hystrix.HystrixRequestLog;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 /**
  * Executable client that demonstrates the lifecycle, metrics, request log and behavior of HystrixCommands.
@@ -71,7 +71,7 @@ public class HystrixCommandDemo {
 
             @Override
             public void run() {
-                HystrixRequestContext context = HystrixRequestContext.initializeContext();
+                HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
                 try {
                     executeSimulatedUserRequestForOrderConfirmationAndCreditCardPayment();
 

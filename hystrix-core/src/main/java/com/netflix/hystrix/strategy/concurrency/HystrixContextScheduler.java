@@ -28,7 +28,7 @@ import com.netflix.hystrix.strategy.HystrixPlugins;
 
 /**
  * Wrap a {@link Scheduler} so that scheduled actions are wrapped with {@link HystrixContextSchedulerAction} so that
- * the {@link HystrixRequestContext} is properly copied across threads (if they are used by the {@link Scheduler}).
+ * the {@link HystrixRequestLifetime} is properly copied across threads (if they are used by the {@link Scheduler}).
  */
 public class HystrixContextScheduler extends Scheduler {
 

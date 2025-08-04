@@ -19,7 +19,7 @@ import com.netflix.hystrix.ExecutionResult;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixEventType;
 import com.netflix.hystrix.HystrixThreadPoolKey;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,22 +29,22 @@ import java.util.List;
  */
 public class HystrixCommandCompletion extends HystrixCommandEvent {
     protected final ExecutionResult executionResult;
-    protected final HystrixRequestContext requestContext;
+    protected final HystrixRequestLifetime requestContext;
 
     private final static HystrixEventType[] ALL_EVENT_TYPES = HystrixEventType.values();
 
     HystrixCommandCompletion(ExecutionResult executionResult, HystrixCommandKey commandKey,
-                             HystrixThreadPoolKey threadPoolKey, HystrixRequestContext requestContext) {
+                             HystrixThreadPoolKey threadPoolKey, HystrixRequestLifetime requestContext) {
         super(commandKey, threadPoolKey);
         this.executionResult = executionResult;
         this.requestContext = requestContext;
     }
 
     public static HystrixCommandCompletion from(ExecutionResult executionResult, HystrixCommandKey commandKey, HystrixThreadPoolKey threadPoolKey) {
-        return from(executionResult, commandKey, threadPoolKey, HystrixRequestContext.getContextForCurrentThread());
+        return from(executionResult, commandKey, threadPoolKey, HystrixRequestLifetime.getContextForCurrentThread());
     }
 
-    public static HystrixCommandCompletion from(ExecutionResult executionResult, HystrixCommandKey commandKey, HystrixThreadPoolKey threadPoolKey, HystrixRequestContext requestContext) {
+    public static HystrixCommandCompletion from(ExecutionResult executionResult, HystrixCommandKey commandKey, HystrixThreadPoolKey threadPoolKey, HystrixRequestLifetime requestContext) {
         return new HystrixCommandCompletion(executionResult, commandKey, threadPoolKey, requestContext);
     }
 
@@ -68,7 +68,7 @@ public class HystrixCommandCompletion extends HystrixCommandEvent {
         return true;
     }
 
-    public HystrixRequestContext getRequestContext() {
+    public HystrixRequestLifetime getRequestContext() {
         return this.requestContext;
     }
 

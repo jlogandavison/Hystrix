@@ -54,7 +54,7 @@ import rx.schedulers.Schedulers;
 
 import com.netflix.hystrix.HystrixCollapser.CollapsedRequest;
 import com.netflix.hystrix.HystrixCollapserTest.TestCollapserTimer;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 import static org.junit.Assert.*;
 
@@ -598,7 +598,7 @@ public class HystrixObservableCollapserTest {
         List<Runnable> runnables = new ArrayList<Runnable>();
         final ConcurrentLinkedQueue<TestSubscriber<String>> subscribers = new ConcurrentLinkedQueue<TestSubscriber<String>>();
 
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
 
         final AtomicInteger uniqueInt = new AtomicInteger(0);
 
@@ -1750,7 +1750,7 @@ public class HystrixObservableCollapserTest {
 
         @Override
         protected HystrixObservableCommand<String> createCommand(Collection<CollapsedRequest<String, String>> collapsedRequests) {
-            assertNotNull("command creation should have HystrixRequestContext", HystrixRequestContext.getContextForCurrentThread());
+            assertNotNull("command creation should have HystrixRequestContext", HystrixRequestLifetime.getContextForCurrentThread());
             if (commandConstructionFails) {
                 throw new RuntimeException("Exception thrown in command construction");
             } else {
@@ -1822,7 +1822,7 @@ public class HystrixObservableCollapserTest {
 
         @Override
         protected Observable<String> construct() {
-            assertNotNull("Wiring the Batch command into the Observable chain should have a HystrixRequestContext", HystrixRequestContext.getContextForCurrentThread());
+            assertNotNull("Wiring the Batch command into the Observable chain should have a HystrixRequestContext", HystrixRequestLifetime.getContextForCurrentThread());
             if (commandExecutionFails) {
                 return Observable.error(new RuntimeException("Synthetic error while running batch command"));
             } else {
@@ -1830,7 +1830,7 @@ public class HystrixObservableCollapserTest {
                     @Override
                     public void call(Subscriber<? super String> subscriber) {
                         try {
-                            assertNotNull("Executing the Batch command should have a HystrixRequestContext", HystrixRequestContext.getContextForCurrentThread());
+                            assertNotNull("Executing the Batch command should have a HystrixRequestContext", HystrixRequestLifetime.getContextForCurrentThread());
                             Thread.sleep(1);
                             for (Integer arg : args) {
                                 int numEmits = emitsPerArg.get(arg.toString());

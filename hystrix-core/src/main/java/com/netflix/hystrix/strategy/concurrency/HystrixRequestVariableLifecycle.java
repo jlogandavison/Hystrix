@@ -34,7 +34,7 @@ public interface HystrixRequestVariableLifecycle<T> {
     /**
      * Invoked when request scope is shutdown to allow for cleanup.
      * <p>
-     * When using the default implementation this is invoked when {@link HystrixRequestContext#shutdown()} is called.
+     * When using the default implementation this is invoked when {@link HystrixRequestLifetime#shutdown()} is called.
      * <p>
      * The {@link HystrixRequestVariable#get()} method should not be called from within this method as it will result in {@link #initialValue()} being called again.
      * 

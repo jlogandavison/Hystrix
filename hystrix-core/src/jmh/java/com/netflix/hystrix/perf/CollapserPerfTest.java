@@ -23,7 +23,7 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixThreadPool;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Level;
@@ -69,12 +69,12 @@ public class CollapserPerfTest {
         @Param({"1", "1000", "1000000"})
         int blackholeConsumption;
 
-        HystrixRequestContext reqContext;
+        HystrixRequestLifetime reqContext;
         Observable<String> executionHandle;
 
         @Setup(Level.Invocation)
         public void setUp() {
-            reqContext = HystrixRequestContext.initializeContext();
+            reqContext = HystrixRequestLifetime.initializeContext();
 
             List<Observable<String>> os = new ArrayList<Observable<String>>();
 

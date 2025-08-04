@@ -24,7 +24,7 @@ import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolMetrics;
 import com.netflix.hystrix.metric.CommandStreamTest;
 import com.netflix.hystrix.strategy.concurrency.HystrixContextRunnable;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.*;
 
 public class CumulativeThreadPoolEventCounterStreamTest extends CommandStreamTest {
-    HystrixRequestContext context;
+    HystrixRequestLifetime context;
     CumulativeThreadPoolEventCounterStream stream;
 
     private static Subscriber<long[]> getSubscriber(final CountDownLatch latch) {
@@ -62,7 +62,7 @@ public class CumulativeThreadPoolEventCounterStreamTest extends CommandStreamTes
 
     @Before
     public void setUp() {
-        context = HystrixRequestContext.initializeContext();
+        context = HystrixRequestLifetime.initializeContext();
     }
 
     @After

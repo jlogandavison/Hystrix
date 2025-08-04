@@ -22,7 +22,7 @@ import com.netflix.hystrix.HystrixObservableCommand;
 import com.netflix.hystrix.HystrixThreadPool;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Level;
@@ -111,7 +111,7 @@ public class CommandExecutionPerfTest {
     @State(Scope.Thread)
     public static class CommandState {
         HystrixCommand<Integer> command;
-        HystrixRequestContext requestContext;
+        HystrixRequestLifetime requestContext;
 
         @Param({"true", "false"})
         public boolean forceOpen;
@@ -129,7 +129,7 @@ public class CommandExecutionPerfTest {
         @Setup(Level.Invocation)
         public void setUp() {
             if (setUpRequestContext) {
-                requestContext = HystrixRequestContext.initializeContext();
+                requestContext = HystrixRequestLifetime.initializeContext();
             }
 
             command = new HystrixCommand<Integer>(
@@ -161,7 +161,7 @@ public class CommandExecutionPerfTest {
     @State(Scope.Thread)
     public static class ObservableCommandState {
         HystrixObservableCommand<Integer> command;
-        HystrixRequestContext requestContext;
+        HystrixRequestLifetime requestContext;
 
         @Param({"true", "false"})
         public boolean forceOpen;
@@ -176,7 +176,7 @@ public class CommandExecutionPerfTest {
         @Setup(Level.Invocation)
         public void setUp() {
             if (setUpRequestContext) {
-                requestContext = HystrixRequestContext.initializeContext();
+                requestContext = HystrixRequestLifetime.initializeContext();
             }
 
             command = new HystrixObservableCommand<Integer>(

@@ -27,7 +27,7 @@ import com.netflix.hystrix.HystrixCommandMetrics;
 import com.netflix.hystrix.HystrixCommandMetrics.HealthCounts;
 import com.netflix.hystrix.HystrixRequestLog;
 import com.netflix.hystrix.strategy.concurrency.HystrixContextRunnable;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
@@ -84,7 +84,7 @@ public class HystrixCommandAsyncDemo {
     public void startDemo(final boolean shouldLog) {
         startMetricsMonitor(shouldLog);
         while (true) {
-            final HystrixRequestContext context = HystrixRequestContext.initializeContext();
+            final HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
             Observable<CreditCardAuthorizationResult> o = observeSimulatedUserRequestForOrderConfirmationAndCreditCardPayment();
 
             final CountDownLatch latch = new CountDownLatch(1);

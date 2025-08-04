@@ -24,10 +24,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 
 /**
- * Initializes the {@link HystrixRequestContext} at the beginning of each HTTP request and then cleans it up at the end.
+ * Initializes the {@link HystrixRequestLifetime} at the beginning of each HTTP request and then cleans it up at the end.
  * <p>
  * Install by adding the following lines to your project web.xml:
  * <p>
@@ -48,7 +48,7 @@ import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
  */
 public class HystrixRequestContextServletFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HystrixRequestContext context = HystrixRequestContext.initializeContext();
+        HystrixRequestLifetime context = HystrixRequestLifetime.initializeContext();
         try {
             chain.doFilter(request, response);
         } finally {

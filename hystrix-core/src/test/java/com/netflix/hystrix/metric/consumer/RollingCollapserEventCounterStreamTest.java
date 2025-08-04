@@ -20,7 +20,7 @@ import com.netflix.hystrix.HystrixCollapserMetrics;
 import com.netflix.hystrix.HystrixEventType;
 import com.netflix.hystrix.HystrixRequestLog;
 import com.netflix.hystrix.metric.CommandStreamTest;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.*;
 
 public class RollingCollapserEventCounterStreamTest extends CommandStreamTest {
-    HystrixRequestContext context;
+    HystrixRequestLifetime context;
     RollingCollapserEventCounterStream stream;
 
     private static Subscriber<long[]> getSubscriber(final CountDownLatch latch) {
@@ -56,7 +56,7 @@ public class RollingCollapserEventCounterStreamTest extends CommandStreamTest {
 
     @Before
     public void setUp() {
-        context = HystrixRequestContext.initializeContext();
+        context = HystrixRequestLifetime.initializeContext();
     }
 
     @After

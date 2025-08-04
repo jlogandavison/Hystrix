@@ -16,7 +16,7 @@
 package com.netflix.hystrix;
 import org.junit.Test;
 
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import rx.Observable;
 
 import java.util.ArrayList;
@@ -32,10 +32,10 @@ public class HystrixCommandTimeoutConcurrencyTesting {
 
         for (int i = 0; i < NUM_TRIALS; i++) {
             List<Observable<String>> observables = new ArrayList<Observable<String>>();
-            HystrixRequestContext context = null;
+            HystrixRequestLifetime context = null;
 
             try {
-                context = HystrixRequestContext.initializeContext();
+                context = HystrixRequestLifetime.initializeContext();
                 for (int j = 0; j < NUM_CONCURRENT_COMMANDS; j++) {
                     observables.add(new TestCommand().observe());
                 }

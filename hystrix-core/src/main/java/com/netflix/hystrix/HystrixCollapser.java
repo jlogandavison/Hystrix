@@ -23,7 +23,7 @@ import com.netflix.hystrix.collapser.RequestCollapser;
 import com.netflix.hystrix.collapser.RequestCollapserFactory;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.netflix.hystrix.strategy.HystrixPlugins;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestLifetime;
 import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisherFactory;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesFactory;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategy;
@@ -74,7 +74,7 @@ public abstract class HystrixCollapser<BatchReturnType, ResponseType, RequestArg
     /**
      * The scope of request collapsing.
      * <ul>
-     * <li>REQUEST: Requests within the scope of a {@link HystrixRequestContext} will be collapsed.
+     * <li>REQUEST: Requests within the scope of a {@link HystrixRequestLifetime} will be collapsed.
      * <p>
      * Typically this means that requests within a single user-request (ie. HTTP request) are collapsed. No interaction with other user requests. 1 queue per user request.
      * </li>
@@ -198,7 +198,7 @@ public abstract class HystrixCollapser<BatchReturnType, ResponseType, RequestArg
      * Scope of collapsing.
      * <p>
      * <ul>
-     * <li>REQUEST: Requests within the scope of a {@link HystrixRequestContext} will be collapsed.
+     * <li>REQUEST: Requests within the scope of a {@link HystrixRequestLifetime} will be collapsed.
      * <p>
      * Typically this means that requests within a single user-request (ie. HTTP request) are collapsed. No interaction with other user requests. 1 queue per user request.
      * </li>
